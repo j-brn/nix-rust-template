@@ -38,6 +38,12 @@ jobs:
     needs:
       - test
 
+    strategy:
+      matrix:
+        system:
+          - "aarch64-linux"
+          - "x86_64-linux"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -58,5 +64,5 @@ jobs:
           name: ephemera
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - name: Build flake outputs
-        run: nix build
+      - name: Build package
+        run: nix build .#packages.${{ matrix.system }}.default
