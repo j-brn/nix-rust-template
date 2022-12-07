@@ -24,7 +24,7 @@ jobs:
       - name: Set up binary cache
         uses: cachix/cachix-action@v11
         with:
-          name: ephemera
+          name: nix-rust-template
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Check flake
@@ -61,8 +61,52 @@ jobs:
       - name: Set up binary cache
         uses: cachix/cachix-action@v11
         with:
-          name: ephemera
+          name: nix-rust-template
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - name: Build package
+      - name: Build nix package
         run: nix build .#packages.${{ matrix.system }}.default
+
+  bundle:
+    runs-on: ubuntu:latest
+    needs:
+      - build
+
+    strategy:
+      matrix:
+        system:
+          - "aarch64-linux"
+          - "x86_64-linux"
+        bundler:
+          - "deb"
+          - "pacman"
+          - "rpm"
+          - "tar"
+          - "zip"
+          - "docker"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU binfmt for cross compiling
+        uses: docker/setup-qemu-action@v2
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v17
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            extra-platforms = aarch64-linux x86_64-linux
+
+      - name: Set up binary cache
+        uses: cachix/cachix-action@v11
+        with:
+          name: nix-rust-template
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Bundle ${{ matrix.bundler }} for ${{ matrix.system }}
+        run: |
+          nix bundle \
+            --bundler github:viperML/bundlers#${{ matrix.bundler }} \
+            .#packages.${{ matrix.system }}.default

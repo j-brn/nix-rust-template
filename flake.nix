@@ -1,15 +1,18 @@
 {
   inputs = {
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+
     fenix = {
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    flake-parts.url = "github:hercules-ci/flake-parts";
+
     naersk = {
       url = "github:nix-community/naersk";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+
+    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
   outputs = { self, fenix, naersk, flake-parts, ... }:
