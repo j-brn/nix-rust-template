@@ -13,7 +13,7 @@
       url = "github:rustsec/advisory-db";
       flake = false;
     };
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
   };
 
   outputs = { self, fenix, crane, flake-parts, advisory-db, ... }:
