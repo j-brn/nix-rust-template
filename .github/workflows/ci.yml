@@ -24,7 +24,7 @@ jobs:
       - name: Set up binary cache
         uses: cachix/cachix-action@v11
         with:
-          name: rust-nix-template
+          name: nix-rust-template
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Check flake
@@ -58,7 +58,7 @@ jobs:
       - name: Set up binary cache
         uses: cachix/cachix-action@v11
         with:
-          name: rust-nix-template
+          name: nix-rust-template
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Build package
