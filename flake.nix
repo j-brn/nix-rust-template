@@ -27,14 +27,13 @@
 
       perSystem = { lib, config, self', inputs', pkgs, system, ... }:
         let
-          rustToolchain = with fenix.packages.${system};
-            combine [
-              minimal.rustc
-              minimal.cargo
-              stable.rustfmt
-              stable.clippy
-              stable.rust-src
-            ];
+          rustToolchain = fenix.packages.${system}.stable.withComponents [
+            "rustc"
+            "cargo"
+            "rustfmt"
+            "clippy"
+            "rust-src"
+          ];
 
           craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
           src = craneLib.cleanCargoSource ./.;
