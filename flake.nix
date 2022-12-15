@@ -46,11 +46,13 @@
           };
 
           my-crate = craneLib.buildPackage {
+            name = "my-crate";
             inherit cargoArtifacts src buildInputs nativeBuildInputs;
           };
         in
         {
           packages.default = my-crate;
+
           apps.default = {
             type = "app";
             program = "${self.packages.${system}.default}/bin/my-crate";
