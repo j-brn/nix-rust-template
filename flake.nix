@@ -46,7 +46,7 @@
           };
 
           my-crate = craneLib.buildPackage {
-            name = "my-crate";
+            pname = "my-crate";
             inherit cargoArtifacts src buildInputs nativeBuildInputs;
           };
         in
@@ -81,7 +81,7 @@
     });
 
   nixConfig = {
-    extra-substituters = [
+    extra-trusted-substituters = [
       "https://cache.nixos.org/"
       "https://nix-community.cachix.org"
       "https://nix-rust-template.cachix.org"
