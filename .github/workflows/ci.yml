@@ -79,9 +79,6 @@ jobs:
           - "deb"
           - "pacman"
           - "rpm"
-          - "tar"
-          - "zip"
-          - "docker"
 
     steps:
       - name: Checkout repository
