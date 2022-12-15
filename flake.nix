@@ -46,7 +46,7 @@
           };
 
           my-crate = craneLib.buildPackage {
-            pname = "my-crate";
+            name = "my-crate";
             inherit cargoArtifacts src buildInputs nativeBuildInputs;
           };
         in
