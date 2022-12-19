@@ -16,6 +16,26 @@
         "type": "github"
       }
     },
+    "bundlers": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1670439120,
+        "narHash": "sha256-FmxGILE9JffNOCWxEArvmDW+wbeHs0Kw08vGvwIvc/8=",
+        "owner": "viperML",
+        "repo": "bundlers",
+        "rev": "5f6769a3737cbc419d47f0a392d270428ae6138d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "viperML",
+        "repo": "bundlers",
+        "type": "github"
+      }
+    },
     "crane": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -146,6 +166,7 @@
     "root": {
       "inputs": {
         "advisory-db": "advisory-db",
+        "bundlers": "bundlers",
         "crane": "crane",
         "fenix": "fenix",
         "flake-parts": "flake-parts",

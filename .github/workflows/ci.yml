@@ -75,9 +75,12 @@ jobs:
           - "aarch64-linux"
           - "x86_64-linux"
         bundler:
-          - "deb"
-          - "pacman"
-          - "rpm"
+          - name: "deb"
+            extension: "deb"
+          - name: "pacman"
+            extension: "tar.xz"
+          - name: "rpm"
+            extension: "rpm"
 
     steps:
       - name: Checkout repository
@@ -99,10 +102,10 @@ jobs:
           name: nix-rust-template
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - name: Bundle ${{ matrix.bundler }} for ${{ matrix.system }}
-        run: |
-          nix bundle \
-            --bundler github:viperML/bundlers#${{ matrix.bundler }} \
-            --accept-flake-config
-            --out-link "${{ github.event.repository.name }}-${{ github.rev_name }}-${{ matrix.system }}.${{ matrix.bundler }}"
-            .#packages.${{ matrix.system }}.default
+      - name: Build ${{ matrix.bundler.name }} package for ${{ matrix.system }}
+        run: >-
+          nix bundle
+          --bundler .#${{ matrix.bundler.name }}
+          --accept-flake-config
+          --out-link "${{ github.event.repository.name }}-${{ github.rev_name }}-${{ matrix.system }}.${{ matrix.bundler.extension }}"
+          .#packages.${{ matrix.system }}.default
