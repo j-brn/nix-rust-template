@@ -107,5 +107,11 @@ jobs:
           nix bundle
           --bundler .#${{ matrix.bundler.name }}
           --accept-flake-config
-          --out-link "${{ github.event.repository.name }}-${{ github.rev_name }}-${{ matrix.system }}.${{ matrix.bundler.extension }}"
+          --out-link "bundles/${{ github.event.repository.name }}-${{ matrix.system }}.${{ matrix.bundler.extension }}"
           .#packages.${{ matrix.system }}.default
+
+      - name: Upload ${{ matrix.bundler.name }} package for ${{ matrix.system }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.bundler.name }}-${{ matrix.system }}
+          path: bundles/${{ github.event.repository.name }}-${{ matrix.system }}.${{ matrix.bundler.extension }}
