@@ -1,22 +1,31 @@
 {
   inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+
     fenix = {
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    flake-parts.url = "github:hercules-ci/flake-parts";
+
     crane = {
       url = "github:ipetkov/crane";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     advisory-db = {
       url = "github:rustsec/advisory-db";
       flake = false;
     };
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+
+    bundlers = {
+      url = "github:viperML/bundlers";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
-  outputs = { self, fenix, crane, flake-parts, advisory-db, ... }:
+  outputs = { self, fenix, crane, flake-parts, advisory-db, bundlers, ... }:
     flake-parts.lib.mkFlake { inherit self; } ({ withSystem, ... }: {
       systems = [
         "x86_64-linux"
@@ -51,6 +60,7 @@
         in
         {
           packages.default = my-crate;
+
           apps.default = {
             type = "app";
             program = "${self.packages.${system}.default}/bin/my-crate";
@@ -76,10 +86,12 @@
 
           formatter = pkgs.nixpkgs-fmt;
         };
+
+      flake.bundlers = bundlers.bundlers;
     });
 
   nixConfig = {
-    extra-substituters = [
+    extra-trusted-substituters = [
       "https://cache.nixos.org/"
       "https://nix-community.cachix.org"
       "https://nix-rust-template.cachix.org"
