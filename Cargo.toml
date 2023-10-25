@@ -1,11 +1,6 @@
-[package]
-name = "my-crate"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-
-
-[profile.release]
-lto = "fat"
-codegen-units = 1
+[workspace]
+resolver = "2"
+members = [
+    "./crates/server",
+    "./crates/client"
+]
