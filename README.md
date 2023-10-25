@@ -38,6 +38,13 @@
 - (optional) allow direnv to run: `direnv allow`
 
 
+## Usage
+
+- `nix build` to build
+- `nix flake check` to run tests
+- `nix develop` to enter the dev shell (happens automatically when using direnv)
+
+
 ## Planned Features
 
 - [ ] darwin support
