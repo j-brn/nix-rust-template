@@ -78,6 +78,8 @@
                 meta.mainProgram = "agent";
                 inherit cargoArtifacts;
               });
+
+              docs = pkgs.callPackage ./docs {};
             };
 
           checks =
