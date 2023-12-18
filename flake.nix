@@ -41,58 +41,21 @@
 
           craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
 
-          commonBuildArgs = rec {
+          commonArgs = {
             src = craneLib.cleanCargoSource ./.;
 
             pname = "nix-rust-template";
             version = "v0.1.0";
 
-            nativeBuildInputs = with pkgs; [ pkg-config ];
-            buildInputs = [ ];
+            nativeBuildInputs = with pkgs; [ pkg-config clang mold ];
+            buildInputs = [ ] ++ lib.optionals pkgs.stdenv.isDarwin [
+              pkgs.libiconv
+            ];
+
+            RUSTFLAGS="-C linker=clang -C link-arg=-fuse-ld=${pkgs.mold}/bin/mold";
           };
 
-          cargoArtifacts = craneLib.buildDepsOnly ({ } // commonBuildArgs);
-          clippy-check = craneLib.cargoClippy ({
-            inherit cargoArtifacts;
-            cargoClippyExtraArgs = "--all-features -- --deny warnings";
-          }
-          // commonBuildArgs);
-
-          rust-fmt-check = craneLib.cargoFmt ({ inherit (commonBuildArgs) src; } // commonBuildArgs);
-
-          test-check = craneLib.cargoNextest ({
-            inherit cargoArtifacts;
-            partitions = 1;
-            partitionType = "count";
-          }
-          // commonBuildArgs);
-
-          doc-check = craneLib.cargoDoc ({
-            inherit cargoArtifacts;
-          }
-          // commonBuildArgs);
-
-          audit-check = craneLib.cargoAudit ({
-            inherit (commonBuildArgs) src;
-            inherit advisory-db;
-          }
-          // commonBuildArgs);
-
-          server-package = craneLib.buildPackage ({
-            pname = "server";
-            cargoExtraFlags = "--bin server";
-            meta.mainProgram = "server";
-            inherit cargoArtifacts;
-          }
-          // commonBuildArgs);
-
-          client-package = craneLib.buildPackage ({
-            pname = "client";
-            cargoExtraFlags = "--bin client";
-            meta.mainProgram = "client";
-            inherit cargoArtifacts;
-          }
-          // commonBuildArgs);
+          cargoArtifacts = craneLib.buildDepsOnly commonArgs;
         in
         {
           devShells.default = pkgs.mkShell {
@@ -102,15 +65,40 @@
 
           packages =
             {
-              server = server-package;
-              client = client-package;
+              server =  craneLib.buildPackage (commonArgs // {
+                pname = "server";
+                cargoExtraFlags = "--bin server";
+                meta.mainProgram = "server";
+                inherit cargoArtifacts;
+              });
+
+              client = craneLib.buildPackage (commonArgs // {
+                pname = "agent";
+                cargoExtraFlags = "--bin client";
+                meta.mainProgram = "agent";
+                inherit cargoArtifacts;
+              });
             };
 
           checks =
             {
-              inherit clippy-check rust-fmt-check test-check doc-check audit-check;
-              inherit server-package client-package;
-            };
+              fmt = craneLib.cargoFmt (commonArgs);
+              audit = craneLib.cargoAudit (commonArgs // { inherit advisory-db; });
+              rustdoc = craneLib.cargoDoc (commonArgs // { inherit cargoArtifacts; });
+
+              clippy-check = craneLib.cargoClippy (commonArgs // {
+                inherit cargoArtifacts;
+                cargoClippyExtraArgs = "--all-features -- --deny warnings";
+              });
+
+              test-check = craneLib.cargoNextest (commonArgs // {
+                inherit cargoArtifacts;
+                partitions = 1;
+                partitionType = "count";
+              });
+            }
+            # build packages as part of the checks
+            // (lib.mapAttrs' (key: value: lib.nameValuePair (key + "-package") value) self'.packages);
 
           formatter = pkgs.nixpkgs-fmt;
         };
