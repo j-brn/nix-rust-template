@@ -73,9 +73,9 @@
               });
 
               client = craneLib.buildPackage (commonArgs // {
-                pname = "agent";
+                pname = "client";
                 cargoExtraFlags = "--bin client";
-                meta.mainProgram = "agent";
+                meta.mainProgram = "client";
                 inherit cargoArtifacts;
               });
 
