@@ -41,6 +41,7 @@ jobs:
         package:
           - "server"
           - "client"
+          - "docs"
 
     steps:
       - name: Checkout repository
@@ -108,11 +109,8 @@ jobs:
           extra-conf: |
             extra-platforms = aarch64-linux x86_64-linux
 
-      - name: Set up binary cache
-        uses: cachix/cachix-action@v13
-        with:
-          name: nix-rust-template
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - name: Cache Nix store
+        uses: DeterminateSystems/magic-nix-cache-action@v2
 
       - name: Build ${{ matrix.bundler.name }} package for ${{ matrix.system }}
         run: >-
@@ -128,6 +126,44 @@ jobs:
         with:
           name: ${{ matrix.package }}-${{ matrix.bundler.name }}-${{ matrix.system }}
           path: bundles/*
+
+  deploy-pages:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v8
+
+      - name: Cache Nix store
+        uses: DeterminateSystems/magic-nix-cache-action@v2
+
+      - name: Build package
+        run: nix build --accept-flake-config .#docs
+
+      - name: Prepare assets for upload
+        run: cp -r --dereference --no-preserve=mode,ownership result/ public/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: public/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
 
   release:
     runs-on: ubuntu-latest
@@ -152,3 +188,5 @@ jobs:
           name: ${{ github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref }}
+
+
