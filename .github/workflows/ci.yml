@@ -73,7 +73,7 @@ jobs:
           - "aarch64-linux"
           - "x86_64-linux"
         bundler:
-          - name: "deb"
+          - name: "debian"
             path: "github:viperML/bundlers#deb"
             extension: "deb"
 
@@ -125,7 +125,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.package }}-${{ matrix.bundler.name }}-${{ matrix.system }}
-          path: bundles/*
+          path: bundles/**
 
   deploy-pages:
     runs-on: ubuntu-latest
