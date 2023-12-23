@@ -121,14 +121,18 @@ jobs:
           .#packages.${{ matrix.system }}.${{ matrix.package }}
 
       - name: Prepare Bundle for upload
-        run: cp --no-preserve=mode,ownership $(find -L result -type f -print -quit) bundle
+        run: >-
+          cp
+          --no-preserve=mode,ownership
+          $(find -L result -type f -print -quit)
+          ${{ matrix.package }}-${{ github.ref_name }}-${{ matrix.bundler.name }}-${{ matrix.system }}.${{ matrix.bundler.extension }}
 
       - name: Upload bundle
         if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.package }}-${{ github.ref_name }}-${{ matrix.bundler.name }}-${{ matrix.system }}.${{ matrix.bundler.extension }}
-          path: bundle
+          name: ${{ matrix.package }}-${{ github.ref_name }}-${{ matrix.bundler.name }}-${{ matrix.system }}
+          path: ${{ matrix.package }}-${{ github.ref_name }}-${{ matrix.bundler.name }}-${{ matrix.system }}.${{ matrix.bundler.extension }}
 
   deploy-pages:
     runs-on: ubuntu-latest
@@ -184,15 +188,12 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          path: artifacts
+          path: bundles
+          merge-multiple: true
 
       - name: Create release
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          artifacts: "artifacts/**"
-          commit: ${{ github.sha }}
-          name: ${{ github.ref_name }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref }}
-
-
+          files: |
+            bundles/*
