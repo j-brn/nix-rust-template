@@ -117,15 +117,20 @@ jobs:
           nix bundle
           --bundler ${{ matrix.bundler.path }}
           --accept-flake-config
-          --out-link "bundles/${{ github.event.repository.name }}-${{ matrix.system }}.${{ matrix.bundler.extension }}"
+          --out-link result/
           .#packages.${{ matrix.system }}.${{ matrix.package }}
 
-      - name: Upload bundles
+      - name: Extract Bundle
+        run: |
+          mkdir bundles/
+          cp $(find -L result/ -type f -print -quit) bundle       
+
+      - name: Upload bundle
         if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.package }}-${{ matrix.bundler.name }}-${{ matrix.system }}
-          path: bundles/**
+          name: ${{ matrix.package }}-${{ github.ref_name }}-${{ matrix.bundler.name }}-${{ matrix.system }}.${{ matrix.bundler.extension }}
+          path: bundle
 
   deploy-pages:
     runs-on: ubuntu-latest
