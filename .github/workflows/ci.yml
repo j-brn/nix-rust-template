@@ -121,6 +121,7 @@ jobs:
           .#packages.${{ matrix.system }}.${{ matrix.package }}
 
       - name: Prepare Bundle for upload
+        if: startsWith(github.ref, 'refs/tags/v')
         run: >-
           cp
           --no-preserve=mode,ownership
