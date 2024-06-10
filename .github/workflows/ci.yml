@@ -23,7 +23,7 @@ jobs:
             extra-platforms = aarch64-linux x86_64-linux
 
       - name: Cache Nix store
-        uses: DeterminateSystems/magic-nix-cache-action@v6
+        uses: DeterminateSystems/magic-nix-cache-action@v7
 
       - name: Check flake
         run: nix flake check --accept-flake-config
@@ -57,7 +57,7 @@ jobs:
             extra-platforms = aarch64-linux x86_64-linux
 
       - name: Cache Nix store
-        uses: DeterminateSystems/magic-nix-cache-action@v6
+        uses: DeterminateSystems/magic-nix-cache-action@v7
 
       - name: Build package
         run: nix build --accept-flake-config .#packages.${{ matrix.system }}.${{ matrix.package }}
@@ -110,7 +110,7 @@ jobs:
             extra-platforms = aarch64-linux x86_64-linux
 
       - name: Cache Nix store
-        uses: DeterminateSystems/magic-nix-cache-action@v6
+        uses: DeterminateSystems/magic-nix-cache-action@v7
 
       - name: Build ${{ matrix.bundler.name }} package for ${{ matrix.system }}
         run: >-
@@ -159,7 +159,7 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@v12
 
       - name: Cache Nix store
-        uses: DeterminateSystems/magic-nix-cache-action@v6
+        uses: DeterminateSystems/magic-nix-cache-action@v7
 
       - name: Build package
         run: nix build --accept-flake-config .#docs
