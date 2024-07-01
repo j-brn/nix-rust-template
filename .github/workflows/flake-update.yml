@@ -15,7 +15,7 @@ jobs:
         uses: cachix/install-nix-action@8887e596b4ee1134dae06b98d573bd674693f47c # v26
 
       - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@v21
+        uses: DeterminateSystems/update-flake-lock@v23
         with:
           pr-title: "update flake inputs"
           pr-labels: |
