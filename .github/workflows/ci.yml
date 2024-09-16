@@ -17,7 +17,7 @@ jobs:
         uses: docker/setup-qemu-action@v3
 
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v13
+        uses: DeterminateSystems/nix-installer-action@v14
         with:
           extra-conf: |
             extra-platforms = aarch64-linux x86_64-linux
@@ -51,7 +51,7 @@ jobs:
         uses: docker/setup-qemu-action@v3
 
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v13
+        uses: DeterminateSystems/nix-installer-action@v14
         with:
           extra-conf: |
             extra-platforms = aarch64-linux x86_64-linux
@@ -104,7 +104,7 @@ jobs:
         uses: docker/setup-qemu-action@v3
 
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v13
+        uses: DeterminateSystems/nix-installer-action@v14
         with:
           extra-conf: |
             extra-platforms = aarch64-linux x86_64-linux
@@ -156,7 +156,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v13
+        uses: DeterminateSystems/nix-installer-action@v14
 
       - name: Cache Nix store
         uses: DeterminateSystems/magic-nix-cache-action@v7
